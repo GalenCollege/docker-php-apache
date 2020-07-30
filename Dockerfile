@@ -12,3 +12,4 @@ RUN docker-php-ext-install zip opcache exif
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && docker-php-ext-install imap
 
 RUN curl https://getcomposer.org/installer | php && mv composer.phar /bin
+RUN a2enmod rewrite
