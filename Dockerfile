@@ -15,6 +15,7 @@ RUN curl https://getcomposer.org/installer | php && mv composer.phar /bin
 RUN a2enmod rewrite
 
 RUN apt-get update \
+    && apt install -y gnupg \
     && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
     && curl https://packages.microsoft.com/config/debian/9/prod.list \
         > /etc/apt/sources.list.d/mssql-release.list \
