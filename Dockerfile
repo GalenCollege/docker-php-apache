@@ -26,7 +26,7 @@ RUN apt-get update \
     && apt-get update \
     && apt-get -y --no-install-recommends install \
         unixodbc-dev \
-        msodbcsql17
+        msodbcsql17 \
     && rm -r /var/lib/apt/lists/*
 
 RUN docker-php-ext-install mbstring pdo pdo_mysql \
