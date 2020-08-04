@@ -30,8 +30,8 @@ RUN apt-get update \
     && apt-get -y --no-install-recommends install \
         unixodbc-dev \
         msodbcsql17 \
+        libonig-dev \
     && rm -r /var/lib/apt/lists/*
 
-RUN docker-php-ext-install mbstring pdo pdo_mysql \
-    && pecl install sqlsrv pdo_sqlsrv xdebug \
+RUN pecl install sqlsrv pdo_sqlsrv xdebug \
     && docker-php-ext-enable sqlsrv pdo_sqlsrv xdebug
