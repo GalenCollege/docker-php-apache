@@ -14,6 +14,8 @@ RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && docker-php-
 RUN curl https://getcomposer.org/installer | php && mv composer.phar /bin
 RUN a2enmod rewrite
 
+ENV ACCEPT_EULA=Y
+
 RUN apt-get update \
     && apt install -y gnupg \
     && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
