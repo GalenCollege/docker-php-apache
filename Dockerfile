@@ -1,6 +1,6 @@
 from php:apache
 
-LABEL version="1.0"
+LABEL version="1.1"
 LABEL description="Base PHP install for docker. Mount /var/www/html to volume or bind location."
 LABEL maintainer="Chris Howatt <chowatt@galencollege.edu>"
 
