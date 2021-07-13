@@ -38,6 +38,6 @@ RUN a2enmod rewrite
 
 # Install required extensions
 RUN docker-php-ext-install intl mysqli pdo pdo_mysql
-RUN docker-php-ext-install gd intl ldap xmlrpc
+RUN docker-php-ext-install gd intl ldap
 RUN docker-php-ext-install zip opcache exif
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && docker-php-ext-install imap
