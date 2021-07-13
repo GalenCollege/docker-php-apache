@@ -37,6 +37,7 @@ RUN curl https://getcomposer.org/installer | php && mv composer.phar /bin
 RUN a2enmod rewrite
 
 # Install required extensions
+RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu
 RUN docker-php-ext-install intl mysqli pdo pdo_mysql
 RUN docker-php-ext-install opcache exif
 RUN docker-php-ext-install ldap
