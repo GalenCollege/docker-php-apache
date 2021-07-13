@@ -1,37 +1,43 @@
-from php:apache
+FROM php:apache
+WORKDIR /application
+
+ENV ACCEPT_EULA=Y
 
 LABEL version="1.1"
 LABEL description="Base PHP install for docker. Mount /var/www/html to volume or bind location."
 LABEL maintainer="Chris Howatt <chowatt@galencollege.edu>"
 
-RUN apt-get update && apt-get install -y git libc-client-dev libkrb5-dev libxml2-dev libbz2-dev zlib1g-dev libpng-dev libicu-dev libldap2-dev vim && rm -r /var/lib/apt/lists/*
-RUN docker-php-ext-install pdo_mysql mysqli gd intl ldap xmlrpc
+# Fix debconf warnings upon build
+ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get install -y libzip* && rm -r /var/lib/apt/lists/*
-RUN docker-php-ext-install zip opcache exif
-RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && docker-php-ext-install imap
+# Install selected extensions and other stuff
+RUN apt-get update \
+    && apt-get -y --no-install-recommends install apt-utils libxml2-dev gnupg apt-transport-https \
+    && libc-client-dev libkrb5-dev libxml2-dev libbz2-dev zlib1g-dev libpng-dev libicu-dev libldap2-dev vim \
+    && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
+
+# Install git
+RUN apt-get update \
+    && apt-get -y install git \
+    && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
+
+# Install MS ODBC Driver for SQL Server
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
+    && curl https://packages.microsoft.com/config/debian/9/prod.list > /etc/apt/sources.list.d/mssql-release.list \
+    && apt-get update \
+    && apt-get -y --no-install-recommends install msodbcsql17 unixodbc-dev \
+    && pecl install sqlsrv \
+    && pecl install pdo_sqlsrv \
+    && echo "extension=pdo_sqlsrv.so" >> `php --ini | grep "Scan for additional .ini files" | sed -e "s|.*:\s*||"`/30-pdo_sqlsrv.ini \
+    && echo "extension=sqlsrv.so" >> `php --ini | grep "Scan for additional .ini files" | sed -e "s|.*:\s*||"`/30-sqlsrv.ini \
+    && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
+
 
 RUN curl https://getcomposer.org/installer | php && mv composer.phar /bin
 RUN a2enmod rewrite
 
-ENV ACCEPT_EULA=Y
-
-RUN apt-get update \
-    && apt install -y gnupg \
-    && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
-    && curl https://packages.microsoft.com/config/debian/9/prod.list \
-        > /etc/apt/sources.list.d/mssql-release.list \
-    && apt-get install -y --no-install-recommends \
-        locales \
-        apt-transport-https \
-    && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
-    && locale-gen \
-    && apt-get update \
-    && apt-get -y --no-install-recommends install \
-        unixodbc-dev \
-        msodbcsql17 \
-        libonig-dev \
-    && rm -r /var/lib/apt/lists/*
-
-RUN pecl install sqlsrv pdo_sqlsrv xdebug \
-    && docker-php-ext-enable sqlsrv pdo_sqlsrv xdebug
+# Install required extensions
+RUN docker-php-ext-install intl mysqli pdo pdo_mysql
+RUN docker-php-ext-install gd intl ldap xmlrpc
+RUN docker-php-ext-install zip opcache exif
+RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && docker-php-ext-install imap
