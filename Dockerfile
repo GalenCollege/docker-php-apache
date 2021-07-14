@@ -12,7 +12,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 # Install selected extensions and other stuff
 RUN apt-get update \
-    && apt-get -y --no-install-recommends install apt-utils libxml2-dev gnupg apt-transport-https \
+    && apt-get -y --no-install-recommends install apt-utils libxml2-dev gnupg apt-transport-https ldb-dev libldap openldap-dev \
     && libc-client-dev libkrb5-dev libxml2-dev libbz2-dev zlib1g-dev libpng-dev libicu-dev libldap2-dev vim \
     && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
@@ -35,6 +35,8 @@ RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
 
 RUN curl https://getcomposer.org/installer | php && mv composer.phar /bin
 RUN a2enmod rewrite
+
+RUN ldb-dev libldap openldap-dev
 
 # Install required extensions
 RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu
