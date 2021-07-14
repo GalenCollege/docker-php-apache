@@ -12,7 +12,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 # Install selected extensions and other stuff
 RUN apt-get update \
-    && apt-get -y --no-install-recommends install apt-utils libxml2-dev gnupg apt-transport-https ldb-dev libldap openldap-dev \
+    && apt-get -y --no-install-recommends install apt-utils libxml2-dev gnupg apt-transport-https ldb-dev libldap openldap-dev gnupg2 \
     && libc-client-dev libkrb5-dev libxml2-dev libbz2-dev zlib1g-dev libpng-dev libicu-dev libldap2-dev vim \
     && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
@@ -39,9 +39,7 @@ RUN a2enmod rewrite
 RUN php -m
 
 # Install required extensions
-RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu
-RUN docker-php-ext-install intl mysqli pdo pdo_mysql
-RUN docker-php-ext-install opcache exif
+
 RUN docker-php-ext-install ldap
 
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && docker-php-ext-install imap
