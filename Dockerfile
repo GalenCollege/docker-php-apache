@@ -36,7 +36,7 @@ RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
 RUN curl https://getcomposer.org/installer | php && mv composer.phar /bin
 RUN a2enmod rewrite
 
-RUN ldb-dev libldap openldap-dev
+RUN php -m
 
 # Install required extensions
 RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu
