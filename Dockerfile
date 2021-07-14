@@ -40,6 +40,6 @@ RUN php -m
 
 # Install required extensions
 
-RUN docker-php-ext-install ldap
+#RUN docker-php-ext-install ldap
 
-RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && docker-php-ext-install imap
+#RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && docker-php-ext-install imap
