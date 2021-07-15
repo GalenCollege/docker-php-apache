@@ -22,14 +22,19 @@ RUN apt-get update \
     && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
 # Install MS ODBC Driver for SQL Server
-RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
-    && curl https://packages.microsoft.com/config/debian/9/prod.list > /etc/apt/sources.list.d/mssql-release.list \
+RUN apt-get update \
+    && apt-get -y install gnupg \
+    && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add \
+    && curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list \
     && apt-get update \
-    && apt-get -y --no-install-recommends install msodbcsql17 unixodbc-dev \
+    && ACCEPT_EULA=Y apt-get install -y msodbcsql17 \
+    && apt-get install -y unixodbc-dev \
     && pecl install sqlsrv \
     && pecl install pdo_sqlsrv \
-    && echo "extension=pdo_sqlsrv.so" >> `php --ini | grep "Scan for additional .ini files" | sed -e "s|.*:\s*||"`/30-pdo_sqlsrv.ini \
-    && echo "extension=sqlsrv.so" >> `php --ini | grep "Scan for additional .ini files" | sed -e "s|.*:\s*||"`/30-sqlsrv.ini \
+    && printf "priority=20\nextension=sqlsrv.so\n" > /usr/local/etc/php/conf.d/sqlsrv.ini \
+    && printf "priority=30\nextension=pdo_sqlsrv.so\n" > /usr/local/etc/php/conf.d/pdo_sqlsrv.ini \
+    && apt-get -y install libldb-dev libldap2-dev \
+    && docker-php-ext-install ldap
     && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
 
@@ -37,9 +42,3 @@ RUN curl https://getcomposer.org/installer | php && mv composer.phar /bin
 RUN a2enmod rewrite
 
 RUN php -m
-
-# Install required extensions
-
-#RUN docker-php-ext-install ldap
-
-#RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && docker-php-ext-install imap
