@@ -33,7 +33,7 @@ RUN apt-get update \
     && pecl install pdo_sqlsrv \
     && printf "priority=20\nextension=sqlsrv.so\n" > /usr/local/etc/php/conf.d/sqlsrv.ini \
     && printf "priority=30\nextension=pdo_sqlsrv.so\n" > /usr/local/etc/php/conf.d/pdo_sqlsrv.ini \
-    && apt-get -y install libldb-dev libldap2-dev \
+    && apt-get -y install libldb-dev libldap2-dev libicu-dev \
     && docker-php-ext-install ldap intl \
     && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
