@@ -21,7 +21,7 @@ RUN apt-get update \
     && apt-get -y install git \
     && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
-# Install MS ODBC Driver for SQL Server
+# Install MS ODBC Driver for SQL Server / PHP Extensions
 RUN apt-get update \
     && apt-get -y install gnupg \
     && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add \
@@ -33,11 +33,10 @@ RUN apt-get update \
     && pecl install pdo_sqlsrv \
     && printf "priority=20\nextension=sqlsrv.so\n" > /usr/local/etc/php/conf.d/sqlsrv.ini \
     && printf "priority=30\nextension=pdo_sqlsrv.so\n" > /usr/local/etc/php/conf.d/pdo_sqlsrv.ini \
-    && apt-get -y install libldb-dev libldap2-dev libicu-dev \
-    && docker-php-ext-install pdo_mysql ldap intl \
+    && apt-get -y install libldb-dev libldap2-dev libicu-dev libzip-dev zip \
+    && docker-php-ext-install pdo_mysql ldap intl zip \
     && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
-
-
+  
 RUN curl https://getcomposer.org/installer | php && mv composer.phar /bin
 RUN a2enmod rewrite
 
