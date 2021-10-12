@@ -38,6 +38,9 @@ RUN apt-get update \
     && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
   
 RUN curl https://getcomposer.org/installer | php && mv composer.phar /bin/composer
+
+COPY testfile /var/www/testfile
+
 RUN a2enmod rewrite
 
 RUN php -m
