@@ -37,7 +37,7 @@ RUN apt-get update \
     && docker-php-ext-install pdo_mysql ldap intl zip \
     && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
   
-RUN curl https://getcomposer.org/installer | php && mv composer.phar /bin
+RUN curl https://getcomposer.org/installer | php && mv composer.phar /bin/composer
 RUN a2enmod rewrite
 
 RUN php -m
