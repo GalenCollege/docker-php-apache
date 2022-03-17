@@ -1,9 +1,9 @@
-FROM php:apache
-WORKDIR /application
+FROM php:7.4-apache
+WORKDIR /var/www/html
 
 ENV ACCEPT_EULA=Y
 
-LABEL version="1.1"
+LABEL version="1.2"
 LABEL description="Base PHP install for docker. Mount /var/www/html to volume or bind location."
 LABEL maintainer="Chris Howatt <chowatt@galencollege.edu>"
 
@@ -18,8 +18,10 @@ RUN apt-get update \
 
 # Install git
 RUN apt-get update \
-    && apt-get -y install git \
-    && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
+    && apt-get -y install git wget \
+    && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* \
+    && wget http://archive.ubuntu.com/ubuntu/pool/main/g/glibc/multiarch-support_2.27-3ubuntu1.5_amd64.deb \
+    && apt-get install ./multiarch-support_2.27-3ubuntu1.5_amd64.deb
 
 # Install MS ODBC Driver for SQL Server / PHP Extensions
 RUN apt-get update \
@@ -33,14 +35,10 @@ RUN apt-get update \
     && pecl install pdo_sqlsrv \
     && printf "priority=20\nextension=sqlsrv.so\n" > /usr/local/etc/php/conf.d/sqlsrv.ini \
     && printf "priority=30\nextension=pdo_sqlsrv.so\n" > /usr/local/etc/php/conf.d/pdo_sqlsrv.ini \
-    && apt-get -y install libldb-dev libldap2-dev libicu-dev libzip-dev zip \
-    && docker-php-ext-install pdo_mysql ldap intl zip \
+    && apt-get -y install libldb-dev libldap2-dev libicu-dev libzip-dev zip zlib1g-dev libpng-dev libzip-dev libodbc1\
+    && docker-php-ext-install pdo_mysql ldap intl zip gd \
     && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
   
-RUN curl https://getcomposer.org/installer | php && mv composer.phar /bin/composer
-
-COPY testfile /var/www/testfile
 
 RUN a2enmod rewrite
-
 RUN php -m
